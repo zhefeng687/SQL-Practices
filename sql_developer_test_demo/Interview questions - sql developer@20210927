@@ -1,5 +1,5 @@
-1. 
-a) A LEFT JOIN B
+#1. 
+##a) A LEFT JOIN B
 SELECT * FROM A 
 	LEFT JOIN B 
 	ON A.Department_id = B.Department_id);
@@ -22,7 +22,7 @@ Employee_name   | Department_id | Department_name |
 +---------------+---------------+-----------------+
 
 
-b) A RIGHT JOIN B
+##b) A RIGHT JOIN B
 SELECT B.Department_id, B.Department_name, A.Employee_name
 FROM A 	
 	RIGHT JOIN B 
@@ -35,7 +35,7 @@ FROM A
  ---------------+-----------------+---------------+
 
 
-c)A FULL JOIN B 
+##c)A FULL JOIN B 
 SELECT * FROM A 
 	LEFT JOIN B 
 	ON A.Department_id = B.Department_id
@@ -52,7 +52,7 @@ UNION
 +---------------+---------------+---------------+-----------------+
 
 
-d)A INNER JOIN B
+##d)A INNER JOIN B
 SELECT A.Employee_name, A.Department_id, B.Department_name
 FROM A 	
 	INNER JOIN B 
@@ -65,11 +65,11 @@ FROM A
 
 
 
-2. 
-a) No, the primary key needs to be unqiue and not null; the Employee_name in Table C has a duplicate record of 'John'.
+#2. 
+##a) No, the primary key needs to be unqiue and not null; the Employee_name in Table C has a duplicate record of 'John'.
 
 
-b)	SELECT employee_name FROM A
+##b)SELECT employee_name FROM A
 	GROUP BY department_id 
 	ORDER BY 1;
 +---------------+
@@ -92,7 +92,7 @@ HAVING num_employee_name > 1-- COUNT(*) >1;
 +---------------+-------------------+
 
 
-c) How to set the primary key for table A to identify the employee ?
+##c) How to set the primary key for table A to identify the employee ?
 
 Employee_name   | Department_id |
 +---------------+---------------+
@@ -126,10 +126,10 @@ GROUP BY Employee_name);
 
 
 
-3.
-find difference between two tables
-step 1 UNION ALL two tables
-step 2 COUNT()>1 -- DUPLICATES ; COUNT()=1 UNIQUE RECORD
+#3.
+- find difference between two tables
+-- step 1 UNION ALL two tables
+-- step 2 COUNT()>1 -- DUPLICATES ; COUNT()=1 UNIQUE RECORD
 
 SELECT * FROM D
 UNION ALL 
@@ -152,8 +152,8 @@ ORDER BY 1;
 
 
 
-4) 
-a. COUNT the employee for each department, sort by department name
+#4) 
+##a. COUNT the employee for each department, sort by department name
 SELECT g.department_name, COUNT(employee_name)num_of_employees 
 FROM F 
 	JOIN G 
@@ -169,7 +169,7 @@ ORDER BY 2 DESC;
 -----------------+-------------------+
 
 
-b. update the record in F 
+##b. update the record in F 
 -- UPDATE F
 -- SET UPPER(F.Employee_name) 
 -- WHERE F.Department_id = 
@@ -184,13 +184,13 @@ WHERE F.Department_id = (SELECT G.Department_id FROM G WHERE G.Department_name =
 
 
 
-5) 
+#5) 
 TRADE_ID Can be set as the PRIMARY KEY because of its unique and not null features. (x) !!
 IF TRADE TRANCATION CANCELLED, PK will be deleted.
 
 
 
-6)
+#6)
 CREATE TABLE Trades
 (BSN_DT timestamp,
 AC_SK_ID integer,
@@ -234,8 +234,8 @@ DECIMAL(size,d) -- size = digits before decimal ; d = size after decimal; size d
 
 
 
-6) 
-a. currency List in all trades;
+#6) 
+##a. currency List in all trades;
 SELECT * FROM Trades
 WHERE CCY IN ('CAD','JPY','USD')
 GROUP BY CCY, TRADE_ID
@@ -277,9 +277,10 @@ GROUP BY CCY;
 +------+
 
 
-b. ZHE DID IT BY HERSELF!!!
+##b. ZHE DID IT BY HERSELF!!!
 Detail Report in CAD  
-Tricks:
+
+###Tricks:
 1. find relationships between tables through the results; requires multiplication :ROUND(FX_1.EXCHANGE_RATE * Trades.EXPOSURE_AMT)
 Round -- 取整
 2. rename the column Trades.EXPOSURE_AMT 'EXPOSURE_AMT(in CAD)'
@@ -291,6 +292,7 @@ you can also use the double quote character.
 Though we usually only enable that and actually use double quotes when we are working with scripts that already have the double quotes, 
 and we want MySQL to accommodate. 
 The backtick character doesn't have any other special use in MySQL, except to "quote" identifiers !!!*/
+
 
 SELECT Trades.BSN_DT, Trades.AC_SK_ID,Trades.TRADE_ID, Trades.EXPOSURE_AMT `EXPOSURE_AMT(in CAD)` 
 FROM Trades WHERE Trades.CCY = 'CAD'
@@ -313,10 +315,9 @@ BSN_DT       | AC_SK_ID | TRADE_ID | EXPOSURE_AMT(in CAD) |
 | 2020-12-31 |        3 |        6 |                 3000 |
 
 
-c. SUMMARY REPORT IN CAD   `()`  
-ZHE DID IT BY HERSELF!!!!
-Tricks:
-From the results, we can see aggregate function AVG has been used as well as the COUNT from the TRADEs, which records from the Detail report groupping by AC_SK_ID. 
+##c. SUMMARY REPORT IN CAD   `()`  
+###Tricks:
+###From the results, we can see aggregate function AVG has been used as well as the COUNT from the TRADEs, which records from the Detail report groupping by AC_SK_ID. 
 
 
 SELECT BSN_DT, AC_SK_ID, 
@@ -346,8 +347,7 @@ ORDER BY 1,2;
 +------------+----------+--------+----------------------+---------------------+
 
 
-d. TOP Exposure by Trade 
-ZHE:
+##d. TOP Exposure by Trade 
 SELECT FT_4.BSN_DT, FT_4.TRADE_ID, FT_4.`EXPOSURE_AMT(in CAD)`
 FROM 
 (	SELECT BSN_DT, TRADE_ID,MAX(`EXPOSURE_AMT(in CAD)`) `EXPOSURE_AMT(in CAD)` 
@@ -383,11 +383,8 @@ FROM
 | 2020-12-31 |        6 |                 3000 |
 +------------+----------+----------------------+
 
-我感觉可以用with or RANK 
 
-
-e.Top Exposure by Account 
-
+##e.Top Exposure by Account 
 /*
 SELECT BSN_DT, AC_SK_ID, 
 MAX(`EXPOSURE_AMT(in CAD)`) `EXPOSURE_AMT(in CAD)`
@@ -400,7 +397,8 @@ FROM Trades JOIN (SELECT * FROM FX WHERE TARGET_CCY = 'CAD')FX_1
 ON Trades.BSN_DT = FX_1.BSN_DT AND Trades.CCY = FX_1.SOURCE_CCY
 ORDER BY BSN_DT, AC_SK_ID, TRADE_ID)FT
 GROUP BY AC_SK_ID
-LIMIT 2;*/ WRONG!!
+LIMIT 2;*/ #WRONG!!
+
 
 SELECT FT_4.BSN_DT, FT_4.AC_SK_ID, FT_4.`EXPOSURE_AMT(in CAD)` 
 FROM 
@@ -438,7 +436,7 @@ FROM
 +------------+----------+----------------------
 
 
-f. Trend REPORT
+##f. Trend REPORT
 SELECT FT_12.AC_SK_ID, 
 	   COALESCE(FT_12.`EXPOSURE_AMT(in CAD) for 2020-12-31`,'')`EXPOSURE_AMT(in CAD) for 2020-12-31`,
 	   COALESCE(FT_11.`EXPOSURE_AMT(in CAD) for 2020-11-30`,'')`EXPOSURE_AMT(in CAD) for 2020-11-30`,
@@ -512,7 +510,7 @@ AC_SK_ID   | EXPOSURE_AMT(in CAD) for 2020-12-31 | EXPOSURE_AMT(in CAD) for 2020
 +----------+-------------------------------------+-------------------------------------+---------+
 
 
-g. Currency Summary
+##g. Currency Summary
 STEP 1 :
 modify TABLE FX
 INSERT INTO FX (BSN_DT,SOURCE_CCY,TARGET_CCY, EXCHAGE_RATE)
